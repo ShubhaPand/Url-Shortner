@@ -1,6 +1,6 @@
 # Serverless URL Shortener on AWS
 
-A serverless web app that turns long URLs into short links and redirects visitors to the original page. This was my first AWS project, built after completing AWS Cloud Practitioner Essentials.
+A serverless web app that turns long URLs into short links and redirects visitors to the original page. This is my first AWS project, built after completing AWS Cloud Practitioner Essentials.
 
 ![Architecture diagram](architecture.svg)
 

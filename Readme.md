@@ -26,6 +26,7 @@ A serverless web app that turns long URLs into short links and redirects visitor
 | CloudWatch Logs | Debugging and monitoring |
 
 ![API routes](api-route.png)
+
 *API Gateway routes.*
 
 ![DynamoDB items](DynamoDB.png)

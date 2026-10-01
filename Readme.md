@@ -6,6 +6,7 @@ A serverless web app that turns long URLs into short links and redirects visitor
 
 ## Demo
 
+![App screenshot](app-url.png)
 ![App screenshot](app.png)
 
 ## How it works

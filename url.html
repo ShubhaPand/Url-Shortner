@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>URL Shortener</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 3rem auto; padding: 0 1rem; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 8px; padding: 8px 16px; }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+  <p>Paste your URL here:</p>
+  <input id="url" type="url" placeholder="https://example.com/very/long/link">
+  <button onclick="shorten()">Shorten</button>
+  <p id="result"></p>
+
+  <script>
+    const API = "https://d7ewur5bv3.execute-api.us-east-1.amazonaws.com";
+
+    async function shorten() {
+      const url = document.getElementById("url").value;
+      const out = document.getElementById("result");
+      try {
+        const r = await fetch(API + "/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await r.json();
+        out.textContent = "";
+        if (data.short_url) {
+          const a = document.createElement("a");
+          a.href = a.textContent = data.short_url;
+          out.appendChild(a);
+        } else {
+          out.textContent = data.error || "Something went wrong";
+        }
+      } catch (e) {
+        out.textContent = "Network error";
+      }
+    }
+
+    document.getElementById("url").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") shorten();
+    });
+  </script>
+</body>
+</html>

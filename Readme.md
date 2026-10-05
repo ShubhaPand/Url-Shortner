@@ -10,11 +10,7 @@ A serverless web app that turns long URLs into short links and redirects visitor
 
 ### Demo video
 
-[Watch: rebuilding the whole stack with Terraform (destroy → apply → test)](
-
 https://github.com/user-attachments/assets/69aa8025-ba40-4046-8bcd-fbc3fd5f4d98
-
-)
 
 The video shows the same architecture deployed with `terraform apply` and tested directly against the API with PowerShell (no web page). It ends with a short link redirecting to the original site.
 

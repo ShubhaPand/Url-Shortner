@@ -78,6 +78,11 @@ resource "aws_lambda_function" "shortener" {
 resource "aws_apigatewayv2_api" "api" {
   name          = "url-shortener-tf-api"
   protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = ["http://${aws_s3_bucket_website_configuration.frontend.website_endpoint}"]
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_headers = ["content-type"]
+  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

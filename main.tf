@@ -94,7 +94,7 @@ resource "aws_apigatewayv2_integration" "lambda" {
 
 resource "aws_apigatewayv2_route" "create" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "POST / shorten"
+  route_key = "POST /shorten"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 

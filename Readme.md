@@ -45,8 +45,8 @@ After building the project in the console, I recreated the backend with Terrafor
 ```bash
 cd terraform
 terraform init
-terraform apply     # builds everything and prints api_url
-terraform destroy   # removes everything
+terraform apply     
+terraform destroy   
 ```
 
 Test the deployed API (PowerShell):
@@ -58,6 +58,15 @@ Invoke-RestMethod -Method Post -Uri "<api_url>" `
 ```
 
 The response contains a `short_code`. Open `<api_url>/<short_code>` in a browser and it redirects to the original URL.
+
+CI/CD pipeline
+
+Every change goes through GitHub Actions (.github/workflows/terraform.yml):
+
+On a pull request: checks formatting (terraform fmt), validates the config, and runs terraform plan so I can review exactly what would change.
+On merge to main: runs terraform apply to deploy the change.
+
+The pipeline signs in to AWS with OpenID Connect (OIDC). GitHub receives short-lived credentials by assuming an IAM role that trusts only this repository, so there are no long-lived access keys stored in GitHub.
 
 ## Security and cost
 
@@ -72,6 +81,8 @@ The response contains a `short_code`. Open `<api_url>/<short_code>` in a browser
 - **DynamoDB `ValidationException`:** opening the bare API address sent an empty code to `GetItem`. I added an input check that returns a clean 400 error.
 - **Frontend debugging:** JavaScript displayed as text because it wasn't inside a `<script>` tag.
 - **Terraform:** I had never used infrastructure as code before this. Rebuilding the stack from scratch showed me how the pieces depend on each other: the Lambda permission and the API integration have to exist before the API can invoke the function, and destroy takes longest on those and the DynamoDB table.
+- **GitHub Actions OIDC login failed with** `Not authorized to perform sts:AssumeRoleWithWebIdentity`: my IAM trust policy looked correct, so I added a debug step to the workflow that decoded the OIDC token. It showed that the sub claim included numeric account and repository IDs (repo:<owner>@<id>/<repo>@<id>:...), so my trust condition never matched. Updating the condition to the real claim value fixed it.
+- **Accidentally committing the `.terraform/` folder**: the push was rejected because the downloaded AWS provider binary exceeded GitHub's 100 MB file limit. I added a .gitignore, removed the folder from Git's staging area, and re-committed without it.
 
 ## Project structure
 
@@ -80,6 +91,8 @@ url.html                 Frontend
 lambda_function.py       Backend logic (Lambda handler)
 iam-policy.json          IAM policy (account ID redacted)
 terraform/main.tf        Terraform version of the backend
+backend.tf               Remote state configuration (S3)
+.github/workflows/terraform.yml     CI/CD pipeline
 architecture.svg         Architecture diagram
 *.png                    Screenshots
 ```
